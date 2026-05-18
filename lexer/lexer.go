@@ -6,7 +6,7 @@ import "fmt"
 const EOF = 0
 
 type Lexer struct {
-	tokens []Token
+	Tokens []Token
 
 	input        []rune
 	inputLength  int
@@ -40,7 +40,7 @@ func (l *Lexer) ReadChar() {
 // After allocate new buffer after adding token
 func (l *Lexer) addToken(tokenType TokenType) {
 	if len(l.buffer) > 0 {
-		l.tokens = append(l.tokens, Token{
+		l.Tokens = append(l.Tokens, Token{
 			Type:    tokenType,
 			Literal: l.buffer,
 			Line:    l.line,
@@ -98,7 +98,7 @@ exitFor:
 		l.ReadChar()
 	}
 
-	for i, t := range l.tokens {
+	for i, t := range l.Tokens {
 		fmt.Printf("%d: %s\n", i, t.String())
 	}
 
