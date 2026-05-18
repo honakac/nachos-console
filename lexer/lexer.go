@@ -1,4 +1,4 @@
-// Package lexer implements a lexer for the Nachos console.
+// Package lexer implements a lexer
 package lexer
 
 import "fmt"
