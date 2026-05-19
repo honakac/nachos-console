@@ -107,15 +107,18 @@ exitFor:
 		switch l.char {
 		// Parse simple words
 		case ' ', EOF, '\n', '\\':
-			l.addToken(Word)
+			if l.char != '\\' {
+				l.addToken(Word)
+			}
 
 			switch l.char {
 			case EOF:
 				break exitFor
 			case '\\':
 				l.ReadChar()
-				l.SkipChars(" \t\n")
-				continue // l.ReadChar() is skipped to avoid skipping a character in the following tokens
+				if l.char != '\n' { // \ \n is just removed
+					l.appendChar()
+				}
 			case '\n':
 				l.appendTokenLiteral(Newline, nil)
 			}
