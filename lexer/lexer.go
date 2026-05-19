@@ -13,19 +13,19 @@ const EOF = 0
 type Lexer struct {
 	Tokens []Token
 
-	input        []rune
+	input        []byte
 	inputLength  int
 	position     int
 	readPosition int
-	char         rune
+	char         byte
 
-	buffer []rune
+	buffer []byte
 	line   uint
 }
 
 func New(input string) *Lexer {
 	return &Lexer{
-		input:       []rune(input),
+		input:       []byte(input),
 		inputLength: len(input),
 	}
 }
@@ -42,7 +42,7 @@ func (l *Lexer) ReadChar() {
 }
 func (l *Lexer) SkipChars(chars string) {
 	for {
-		if strings.ContainsRune(chars, l.char) {
+		if strings.ContainsRune(chars, rune(l.char)) {
 			l.ReadChar()
 		} else {
 			break
@@ -64,10 +64,10 @@ func (l *Lexer) addToken(tokenType TokenType) {
 			Column:  uint(l.position) - uint(len(l.buffer)) + 1,
 		})
 
-		l.buffer = make([]rune, 0)
+		l.buffer = make([]byte, 0)
 	}
 }
-func (l *Lexer) appendTokenLiteral(tokenType TokenType, literal []rune) {
+func (l *Lexer) appendTokenLiteral(tokenType TokenType, literal []byte) {
 	l.Tokens = append(l.Tokens, Token{
 		Type:    tokenType,
 		Literal: literal,

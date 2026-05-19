@@ -26,7 +26,7 @@ func (t TokenType) String() string {
 
 type Token struct {
 	Type    TokenType // Token type (example None, Word...)
-	Literal []rune    // Token
+	Literal []byte    // Token
 	Line    uint      // Line number
 	Column  uint      // Position number
 }
