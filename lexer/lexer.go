@@ -41,12 +41,13 @@ func (l *Lexer) ReadChar() {
 	l.readPosition++
 }
 func (l *Lexer) SkipChars(chars string) {
-	for {
-		if strings.ContainsRune(chars, rune(l.char)) {
-			l.ReadChar()
-		} else {
-			break
-		}
+	for strings.ContainsRune(chars, rune(l.char)) {
+		l.ReadChar()
+	}
+}
+func (l *Lexer) UntilChars(chars string) {
+	for !strings.ContainsRune(chars, rune(l.char)) {
+		l.ReadChar()
 	}
 }
 func (l *Lexer) SkipWhitespace() {
@@ -123,6 +124,14 @@ exitFor:
 				}
 			case '\n', ';':
 				l.appendTokenLiteral(Newline, nil)
+			}
+		case '#':
+			if l.position == 0 || l.input[l.position-1] == ' ' {
+				for l.char != '\n' && l.char != EOF {
+					l.ReadChar()
+				}
+			} else {
+				l.appendChar()
 			}
 		case '"':
 			l.handleString()
