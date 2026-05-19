@@ -10,6 +10,20 @@ import (
 )
 
 func main() {
+	if len(os.Args) >= 2 {
+		buffer, err := os.ReadFile(os.Args[1])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "nachos-console: %v\n", err)
+			os.Exit(1)
+		}
+
+		if err := runner.ParseCommand(string(buffer)); err != nil {
+			fmt.Fprintf(os.Stderr, "nachos-console: %v\n", err)
+			os.Exit(1)
+		}
+
+		return
+	}
 	completer := readline.NewPrefixCompleter(
 		readline.PcItem("exit"),
 	)
@@ -35,7 +49,7 @@ func main() {
 		}
 
 		if err := runner.ParseCommand(line); err != nil {
-			fmt.Fprintf(os.Stderr, "nachos-console: %v", err)
+			fmt.Fprintf(os.Stderr, "nachos-console: %v\n", err)
 		}
 	}
 }
