@@ -1,7 +1,10 @@
 // Package lexer implements a lexer
 package lexer
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 const EOF = 0
 
@@ -35,6 +38,18 @@ func (l *Lexer) ReadChar() {
 	l.position = l.readPosition
 	l.readPosition++
 }
+func (l *Lexer) SkipChars(chars string) {
+	for {
+		if strings.ContainsRune(chars, l.char) {
+			l.ReadChar()
+		} else {
+			break
+		}
+	}
+}
+func (l *Lexer) SkipWhitespace() {
+	l.SkipChars(" \t")
+}
 
 // Add token by exist information and tokenType.
 // After allocate new buffer after adding token
@@ -49,6 +64,14 @@ func (l *Lexer) addToken(tokenType TokenType) {
 
 		l.buffer = make([]rune, 0)
 	}
+}
+func (l *Lexer) appendTokenLiteral(tokenType TokenType, literal []rune) {
+	l.Tokens = append(l.Tokens, Token{
+		Type:    tokenType,
+		Literal: literal,
+		Line:    l.line,
+		Column:  uint(l.position) - uint(len(l.buffer)) + 1,
+	})
 }
 
 func (l *Lexer) appendChar() {
@@ -83,11 +106,18 @@ exitFor:
 	for {
 		switch l.char {
 		// Parse simple words
-		case ' ', EOF:
+		case ' ', EOF, '\n', '\\':
 			l.addToken(Word)
 
-			if l.char == EOF {
+			switch l.char {
+			case EOF:
 				break exitFor
+			case '\\':
+				l.ReadChar()
+				l.SkipChars(" \t\n")
+				continue // l.ReadChar() is skipped to avoid skipping a character in the following tokens
+			case '\n':
+				l.appendTokenLiteral(Newline, nil)
 			}
 		case '"':
 			l.handleString()
@@ -97,6 +127,7 @@ exitFor:
 
 		l.ReadChar()
 	}
+	l.appendTokenLiteral(Newline, nil)
 
 	for i, t := range l.Tokens {
 		fmt.Printf("%d: %s\n", i, t.String())

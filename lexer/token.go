@@ -4,6 +4,7 @@ import "fmt"
 
 const (
 	None = iota
+	Newline
 	Word
 	Pipe
 )
@@ -16,6 +17,8 @@ func (t TokenType) String() string {
 		return "Word"
 	case Pipe:
 		return "Pipe"
+	case Newline:
+		return "Newline"
 	default:
 		return "Unknown"
 	}
