@@ -106,7 +106,7 @@ exitFor:
 	for {
 		switch l.char {
 		// Parse simple words
-		case ' ', EOF, '\n', '\\':
+		case ' ', EOF, '\n', '\\', ';':
 			if l.char != '\\' {
 				l.addToken(Word)
 			}
@@ -119,7 +119,7 @@ exitFor:
 				if l.char != '\n' { // \ \n is just removed
 					l.appendChar()
 				}
-			case '\n':
+			case '\n', ';':
 				l.appendTokenLiteral(Newline, nil)
 			}
 		case '"':
@@ -132,6 +132,7 @@ exitFor:
 	}
 	l.appendTokenLiteral(Newline, nil)
 
+	fmt.Println("Lexer result:")
 	for i, t := range l.Tokens {
 		fmt.Printf("%d: %s\n", i, t.String())
 	}
