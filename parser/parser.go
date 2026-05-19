@@ -4,6 +4,7 @@ package parser
 import (
 	"fmt"
 
+	"github.com/honakac/nachos-console/config"
 	"github.com/honakac/nachos-console/lexer"
 )
 
@@ -66,7 +67,9 @@ func (p *Parser) Handle() error {
 		p.NextToken()
 	}
 
-	fmt.Printf("Parser result:\n%s\n", p.AST)
+	if config.DebugParser {
+		fmt.Printf("Parser result:\n%s\n", p.AST)
+	}
 
 	return nil
 }
