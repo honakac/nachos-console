@@ -45,11 +45,6 @@ func (l *Lexer) SkipChars(chars string) {
 		l.ReadChar()
 	}
 }
-func (l *Lexer) UntilChars(chars string) {
-	for !strings.ContainsRune(chars, rune(l.char)) {
-		l.ReadChar()
-	}
-}
 func (l *Lexer) SkipWhitespace() {
 	l.SkipChars(" \t")
 }
