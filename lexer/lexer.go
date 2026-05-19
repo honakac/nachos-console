@@ -4,6 +4,8 @@ package lexer
 import (
 	"fmt"
 	"strings"
+
+	"github.com/honakac/nachos-console/config"
 )
 
 const EOF = 0
@@ -132,9 +134,11 @@ exitFor:
 	}
 	l.appendTokenLiteral(Newline, nil)
 
-	fmt.Println("Lexer result:")
-	for i, t := range l.Tokens {
-		fmt.Printf("%d: %s\n", i, t.String())
+	if config.DebugLexer {
+		fmt.Println("Lexer result:")
+		for i, t := range l.Tokens {
+			fmt.Printf("%d: %s\n", i, t.String())
+		}
 	}
 
 	return nil
