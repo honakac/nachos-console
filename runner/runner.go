@@ -2,6 +2,9 @@
 package runner
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/honakac/nachos-console/lexer"
 	"github.com/honakac/nachos-console/parser"
 )
@@ -20,17 +23,21 @@ func handleInput(input string) (*parser.Parser, error) {
 	return p, nil
 }
 
-func handleCommandNode(node *parser.CommandNode) {
-	RunCommand(node.Command, node.Args)
+func handleCommandNode(node *parser.CommandNode) error {
+	return RunCommand(node.Command, node.Args)
 }
 
-func handleRootNode(node *parser.RootNode) {
+func handleRootNode(node *parser.RootNode) error {
 	for _, node := range node.Nodes {
 		switch n := node.(type) {
 		case *parser.CommandNode:
-			handleCommandNode(n)
+			if err := handleCommandNode(n); err != nil {
+				fmt.Fprintf(os.Stderr, "nachos-console: %s\n", err) // Just print error
+			}
 		}
 	}
+
+	return nil
 }
 
 func ParseCommand(input string) error {
@@ -39,7 +46,9 @@ func ParseCommand(input string) error {
 		return err
 	}
 
-	handleRootNode(p.AST)
+	if err := handleRootNode(p.AST); err != nil {
+		return err
+	}
 
 	return nil
 }
