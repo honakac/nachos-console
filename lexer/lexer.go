@@ -40,11 +40,13 @@ func (l *Lexer) ReadChar() {
 	l.position = l.readPosition
 	l.readPosition++
 }
+
 func (l *Lexer) SkipChars(chars string) {
 	for strings.ContainsRune(chars, rune(l.char)) {
 		l.ReadChar()
 	}
 }
+
 func (l *Lexer) SkipWhitespace() {
 	l.SkipChars(" \t")
 }
@@ -63,6 +65,7 @@ func (l *Lexer) addToken(tokenType TokenType) {
 		l.buffer = make([]byte, 0)
 	}
 }
+
 func (l *Lexer) appendTokenLiteral(tokenType TokenType, literal []byte) {
 	l.Tokens = append(l.Tokens, Token{
 		Type:    tokenType,
@@ -121,7 +124,7 @@ exitFor:
 				l.appendTokenLiteral(Newline, nil)
 			}
 		case '#':
-			if l.position == 0 || l.input[l.position-1] == ' ' {
+			if l.position == 0 || l.input[l.position-1] == ' ' || l.input[l.position-1] == '\n' {
 				for l.char != '\n' && l.char != EOF {
 					l.ReadChar()
 				}
@@ -130,6 +133,7 @@ exitFor:
 			}
 		case '"':
 			l.handleString()
+			continue
 		default:
 			l.appendChar()
 		}
